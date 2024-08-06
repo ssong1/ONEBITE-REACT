@@ -9,7 +9,7 @@ body {
 
 .App > section {
   background-color: rgb(245, 245, 245);
-  border: 1px rgb(240, 240, 240);
+  border: 1px solid rgb(0, 0, 0);
   border-radius: 5px;
   padding: 20px;
   margin-bottom: 10px;

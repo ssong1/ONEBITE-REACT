@@ -41,13 +41,34 @@ function App() {
     setTodos([newTodo, ...todos]);
   };
 
+  const onUpdate = (targetId) => {
+    // todos state의 값들 중에
+    // targetId와 일치하는 id를 갖는 투두 아이템의 isDone 변경
+    // 인수: todos 배열에서 targetId와 일치하는 id를 갖는 요소의 데이터만 딱 바꾼 새로운 배열
+    setTodos(
+      todos.map((todo) =>
+        todo.id === targetId ? { ...todo, isDone: !todo.isDone } : todo
+      )
+    );
+  };
+
+  const onDelete = (targetId) => {
+    // 인수: todos 배열에서 targetId와 일치하는 id를 갖는 요소만 삭제한 새로운 배열
+    setTodos(todos.filter((todo) => todo.id !== targetId));
+  };
+
   return (
     <div className="App">
       <Header />
       <Editor onCreate={onCreate} />
-      <List />
+      <List todos={todos} onUpdate={onUpdate} onDelete={onDelete} />
     </div>
   );
 }
 
 export default App;
+
+// 프로젝트 완료 정리
+// 1. CSS 속성 display: flex 요소들을 가로 배치
+// 2. 배열형태의 데이터를 리스트 형태로 렌더링
+// 3. 데이터 추가, 삭제, 검색 방법
