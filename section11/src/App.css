@@ -1,0 +1,7 @@
+.App {
+  width: 500px;
+  margin: 0 auto;
+  display: flex; /* 현대 CSS에서 가장 많이 활용 */
+  flex-direction: column;
+  gap: 10px;
+}
