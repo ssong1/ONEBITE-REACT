@@ -1,9 +1,15 @@
 import "./App.css";
-import { useState, useRef, useReducer, useCallback } from "react";
+import {
+  createContext,
+  useState,
+  useRef,
+  useReducer,
+  useCallback,
+  useMemo,
+} from "react";
 import Header from "./components/Header";
 import Editor from "./components/Editor";
 import List from "./components/List";
-// import Exam from "./components/Exam";
 
 const mockData = [
   {
@@ -39,21 +45,14 @@ function reducer(state, action) {
   }
 }
 
+export const TodoStateContext = createContext();
+export const TodoDispatchContext = createContext();
+
 function App() {
-  // const [todos, setTodos] = useState(mockData);
   const [todos, dispatch] = useReducer(reducer, mockData);
   const idRef = useRef(3);
 
   const onCreate = (content) => {
-    // const newTodo = {
-    //   id: idRef.current++,
-    //   isDone: false,
-    //   content,
-    //   date: new Date().getTime(),
-    // };
-    // todos.push(newTodo); 이렇게 하면 절대 안됨
-
-    // setTodos([newTodo, ...todos]);
     dispatch({
       type: "CREATE",
       data: {
@@ -64,30 +63,6 @@ function App() {
       },
     });
   };
-
-  // const onUpdate = (targetId) => {
-  //   // todos state의 값들 중에
-  //   // targetId와 일치하는 id를 갖는 투두 아이템의 isDone 변경
-  //   // 인수: todos 배열에서 targetId와 일치하는 id를 갖는 요소의 데이터만 딱 바꾼 새로운 배열
-  //   // setTodos(
-  //   //   todos.map((todo) =>
-  //   //     todo.id === targetId ? { ...todo, isDone: !todo.isDone } : todo
-  //   //   )
-  //   // );
-  //   dispatch({
-  //     type: "UPDATE",
-  //     targetId,
-  //   });
-  // };
-
-  // const onDelete = (targetId) => {
-  //   // 인수: todos 배열에서 targetId와 일치하는 id를 갖는 요소만 삭제한 새로운 배열
-  //   // setTodos(todos.filter((todo) => todo.id !== targetId));
-  //   dispatch({
-  //     type: "DELETE",
-  //     targetId,
-  //   });
-  // };
 
   const onUpdate = useCallback((targetId) => {
     dispatch({
@@ -103,12 +78,19 @@ function App() {
     });
   }, []);
 
+  const memoizedDispatch = useMemo(() => {
+    return { onCreate, onUpdate, onDelete };
+  }, []);
+
   return (
     <div className="App">
-      {/* <Exam /> */}
       <Header />
-      <Editor onCreate={onCreate} />
-      <List todos={todos} onUpdate={onUpdate} onDelete={onDelete} />
+      <TodoStateContext.Provider value={todos}>
+        <TodoDispatchContext.Provider value={memoizedDispatch}>
+          <Editor />
+          <List />
+        </TodoDispatchContext.Provider>
+      </TodoStateContext.Provider>
     </div>
   );
 }
